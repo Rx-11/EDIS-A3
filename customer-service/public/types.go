@@ -28,5 +28,3 @@ type fetchUserByIdParam struct {
 type fetchUserByUserIdQuery struct {
 	UserID string `json:"userId" query:"userId" validate:"required,email"`
 }
-
-

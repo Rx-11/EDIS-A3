@@ -3,10 +3,11 @@ package public
 import (
 	"errors"
 
-	"github.com/Rx-11/EDIS-A2/customer-service/common"
-	"github.com/Rx-11/EDIS-A2/customer-service/db"
-	"github.com/Rx-11/EDIS-A2/customer-service/pkg"
-	"github.com/Rx-11/EDIS-A2/customer-service/pkg/models"
+	"github.com/Rx-11/EDIS-A3/customer-service/common"
+	"github.com/Rx-11/EDIS-A3/customer-service/db"
+	"github.com/Rx-11/EDIS-A3/customer-service/pkg"
+	"github.com/Rx-11/EDIS-A3/customer-service/pkg/models"
+	"github.com/Rx-11/EDIS-A3/customer-service/service"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
@@ -65,5 +66,27 @@ func createUser(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(common.ErrInternalServerError.StatusCode).JSON(common.ErrInternalServerError)
 	}
+
+	// Send Kafka message after user creation
+	topic := "<your-andrew-ID>.customer.evt"
+	message := map[string]interface{}{
+		"UserID":   user.UserID,
+		"Name":     user.Name,
+		"Phone":    user.Phone,
+		"Address":  user.Address,
+		"Address2": user.Address2,
+		"City":     user.City,
+		"State":    user.State,
+		"Zipcode":  user.Zipcode,
+	}
+
+	err = service.SendMessage(topic, message)
+	if err != nil {
+		return c.Status(common.ErrInternalServerError.StatusCode).JSON(common.NewError(
+			common.ErrInternalServerError.StatusCode,
+			"Failed to send Kafka message.",
+		))
+	}
+
 	return c.Status(fiber.StatusCreated).JSON(user)
 }

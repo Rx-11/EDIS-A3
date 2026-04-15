@@ -7,7 +7,7 @@ import (
 )
 
 type Config struct {
-	DbConfig     DBConfig
+	DbConfig DBConfig
 }
 
 type DBConfig struct {

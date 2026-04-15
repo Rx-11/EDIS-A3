@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/Rx-11/EDIS-A2/customer-service/config"
-	"github.com/Rx-11/EDIS-A2/customer-service/pkg/models"
+	"github.com/Rx-11/EDIS-A3/customer-service/config"
+	"github.com/Rx-11/EDIS-A3/customer-service/pkg/models"
 	_ "github.com/lib/pq"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -121,7 +121,7 @@ func Migrate() {
 		if currentDBType == Postgres {
 			db.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
 		}
-		err := db.AutoMigrate( &models.User{})
+		err := db.AutoMigrate(&models.User{})
 		if err != nil {
 			panic(err)
 		}

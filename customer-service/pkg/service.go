@@ -1,7 +1,7 @@
 package pkg
 
 import (
-	"github.com/Rx-11/EDIS-A2/customer-service/pkg/users"
+	"github.com/Rx-11/EDIS-A3/customer-service/pkg/users"
 )
 
 var (

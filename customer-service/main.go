@@ -6,9 +6,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Rx-11/EDIS-A2/customer-service/config"
-	"github.com/Rx-11/EDIS-A2/customer-service/db"
-	"github.com/Rx-11/EDIS-A2/customer-service/public"
+	"github.com/Rx-11/EDIS-A3/customer-service/config"
+	"github.com/Rx-11/EDIS-A3/customer-service/db"
+	"github.com/Rx-11/EDIS-A3/customer-service/public"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
