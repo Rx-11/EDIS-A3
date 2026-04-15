@@ -61,3 +61,19 @@ func updateBook(c *fiber.Ctx) error {
 	log.Printf("web-bff updateBook <- status=%d body=%s", resp.StatusCode(), string(resp.Body()))
 	return c.Status(resp.StatusCode()).Send(resp.Body())
 }
+
+func fetchRelatedBooks(c *fiber.Ctx) error {
+	param := c.Locals("param").(fetchBookByISBNParam)
+
+	targetURL := config.GetConfig().BookSvcURL + "/books/" + param.ISBN + "/related-books"
+	log.Printf("web-bff fetchRelatedBooks -> GET %s", targetURL)
+
+	resp, err := config.GetFiberClient().Get(targetURL)
+	if err != nil {
+		log.Printf("web-bff fetchRelatedBooks downstream error: %v", err)
+		return c.Status(common.ErrInternalServerError.StatusCode).JSON(common.ErrInternalServerError)
+	}
+
+	log.Printf("web-bff fetchRelatedBooks <- status=%d body=%s", resp.StatusCode(), string(resp.Body()))
+	return c.Status(resp.StatusCode()).Send(resp.Body())
+}

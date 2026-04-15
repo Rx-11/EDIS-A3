@@ -2,6 +2,7 @@ package public
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/Rx-11/EDIS-A2/book-mobile-bff/common"
 	"github.com/Rx-11/EDIS-A2/book-mobile-bff/config"
@@ -70,5 +71,21 @@ func updateBook(c *fiber.Ctx) error {
 		return c.Status(common.ErrInternalServerError.StatusCode).JSON(common.ErrInternalServerError)
 	}
 
+	return c.Status(resp.StatusCode()).Send(resp.Body())
+}
+
+func fetchRelatedBooks(c *fiber.Ctx) error {
+	param := c.Locals("param").(fetchBookByISBNParam)
+
+	targetURL := config.GetConfig().BookSvcURL + "/books/" + param.ISBN + "/related-books"
+	log.Printf("mobile-bff fetchRelatedBooks -> GET %s", targetURL)
+
+	resp, err := config.GetFiberClient().Get(targetURL)
+	if err != nil {
+		log.Printf("mobile-bff fetchRelatedBooks downstream error: %v", err)
+		return c.Status(common.ErrInternalServerError.StatusCode).JSON(common.ErrInternalServerError)
+	}
+
+	log.Printf("mobile-bff fetchRelatedBooks <- status=%d body=%s", resp.StatusCode(), string(resp.Body()))
 	return c.Status(resp.StatusCode()).Send(resp.Body())
 }

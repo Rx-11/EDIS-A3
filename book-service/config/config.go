@@ -7,8 +7,9 @@ import (
 )
 
 type Config struct {
-	DbConfig     DBConfig
-	GeminiAPIKey string `config:"GEMINI_API_KEY"`
+	DbConfig          DBConfig
+	GeminiAPIKey      string `config:"GEMINI_API_KEY"`
+	RecommendationURL string `config:"RECOMMENDATION_URL"`
 }
 
 type DBConfig struct {
@@ -31,6 +32,7 @@ func Init() {
 	config.DbConfig.DBName = os.Getenv("DB_NAME")
 	config.DbConfig.DBMigrate = os.Getenv("DB_MIGRATE") == "true"
 	config.GeminiAPIKey = os.Getenv("GEMINI_API_KEY")
+	config.RecommendationURL = os.Getenv("RECOMMENDATION_URL")
 
 	initGemini()
 }
