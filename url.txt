@@ -1,0 +1,1 @@
+http://bookstore-dev-ExternalALB-1059724176.us-east-1.elb.amazonaws.com
