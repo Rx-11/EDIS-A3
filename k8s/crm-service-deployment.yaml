@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crm-service
+  namespace: bookstore-ns
+  labels:
+    app: crm-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crm-service
+  template:
+    metadata:
+      labels:
+        app: crm-service
+    spec:
+      containers:
+      - name: crm-service
+        image: crm-service:latest # Replace with your image repository and tag
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: KAFKA_BROKER
+          value: "<kafka-broker-address>" # Replace with actual Kafka broker address
+        - name: SMTP_EMAIL
+          value: "<your-email>@gmail.com" # Replace with your email
+        - name: SMTP_PASSWORD
+          value: "<your-app-password>" # Replace with your app password

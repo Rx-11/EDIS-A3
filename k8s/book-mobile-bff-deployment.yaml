@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-mobile-bff
+  namespace: bookstore-ns
+  labels:
+    app: book-mobile-bff
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: book-mobile-bff
+  template:
+    metadata:
+      labels:
+        app: book-mobile-bff
+    spec:
+      containers:
+      - name: book-mobile-bff
+        image: book-mobile-bff:latest # Replace with your image repository and tag
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /status
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 10
