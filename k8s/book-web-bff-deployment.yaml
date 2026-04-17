@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: book-web-bff
-  namespace: bookstore-ns
+  
   labels:
     app: book-web-bff
 spec:
@@ -19,6 +19,11 @@ spec:
       - name: book-web-bff
         image: 813170851015.dkr.ecr.us-east-1.amazonaws.com/book-web-bff:latest # Replace with your image repository and tag
         imagePullPolicy: Always
+        env:
+        - name: CUSTOMER_SVC_URL
+          value: "http://customer-service:8080"
+        - name: BOOK_SVC_URL
+          value: "http://book-service:8080"
         ports:
         - containerPort: 8080
         livenessProbe:

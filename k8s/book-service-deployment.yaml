@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: book-service
-  namespace: bookstore-ns
+  
   labels:
     app: book-service
 spec:
@@ -19,6 +19,23 @@ spec:
       - name: book-service
         image: 813170851015.dkr.ecr.us-east-1.amazonaws.com/book-service:latest # Replace with your image repository and tag
         imagePullPolicy: Always
+        env:
+        - name: DB_USER
+          value: "user"
+        - name: DB_PASSWORD
+          value: "password"
+        - name: DB_HOST
+          value: "bookstore-db-dev.cluster-cndk3sokkeyc.us-east-1.rds.amazonaws.com"
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_NAME
+          value: "bookstoredb"
+        - name: DB_MIGRATE
+          value: "true"
+        - name: GEMINI_API_KEY
+          value: ""
+        - name: RECOMMENDATION_URL
+          value: "ec2-52-200-207-188.compute-1.amazonaws.com"
         ports:
         - containerPort: 8080
         livenessProbe:
@@ -27,3 +44,9 @@ spec:
             port: 8080
           initialDelaySeconds: 3
           periodSeconds: 10
+        volumeMounts:
+        - name: circuit-breaker-state
+          mountPath: /app/state
+      volumes:
+      - name: circuit-breaker-state
+        emptyDir: {}

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: customer-service
-  namespace: bookstore-ns
+  
   labels:
     app: customer-service
 spec:
@@ -19,6 +19,23 @@ spec:
       - name: customer-service
         image: 813170851015.dkr.ecr.us-east-1.amazonaws.com/customer-service:latest # Replace with your image repository and tag
         imagePullPolicy: Always
+        env:
+        - name: DB_USER
+          value: "user"
+        - name: DB_PASSWORD
+          value: "password"
+        - name: DB_HOST
+          value: "bookstore-db-dev.cluster-cndk3sokkeyc.us-east-1.rds.amazonaws.com"
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_NAME
+          value: "bookstoredb"
+        - name: DB_MIGRATE
+          value: "true"
+        - name: KAFKA_BROKERS
+          value: "kafka:9092"
+        - name: KAFKA_TOPIC
+          value: "vkannawa.customer.evt"
         ports:
         - containerPort: 8080
         livenessProbe:
