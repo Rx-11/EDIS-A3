@@ -37,11 +37,11 @@ spec:
         - name: RECOMMENDATION_URL
           value: "ec2-52-200-207-188.compute-1.amazonaws.com"
         ports:
-        - containerPort: 8080
+        - containerPort: 3000
         livenessProbe:
           httpGet:
             path: /status
-            port: 8080
+            port: 3000
           initialDelaySeconds: 3
           periodSeconds: 10
         volumeMounts:
