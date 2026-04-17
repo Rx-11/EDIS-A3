@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: zookeeper
-        image: bitnami/zookeeper:latest
+        image: public.ecr.aws/bitnami/zookeeper:latest
         env:
         - name: ALLOW_ANONYMOUS_LOGIN
           value: "yes"
@@ -59,7 +59,7 @@ spec:
     spec:
       containers:
       - name: kafka
-        image: bitnami/kafka:latest
+        image: public.ecr.aws/bitnami/kafka:latest
         env:
         - name: KAFKA_CFG_ZOOKEEPER_CONNECT
           value: zookeeper:2181
