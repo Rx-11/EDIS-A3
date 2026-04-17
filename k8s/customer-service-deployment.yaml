@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: customer-service
-        image: customer-service:latest # Replace with your image repository and tag
+        image: 813170851015.dkr.ecr.us-east-1.amazonaws.com/customer-service:latest # Replace with your image repository and tag
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
