@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/IBM/sarama"
 	"gopkg.in/gomail.v2"
@@ -22,8 +23,9 @@ type CustomerEvent struct {
 }
 
 func main() {
-	brokers := []string{os.Getenv("KAFKA_BROKER")} // Use environment variable for Kafka broker
-	topic := os.Getenv("KAFKA_TOPIC")              // Use environment variable for Kafka topic
+	brokersEnv := os.Getenv("KAFKA_BROKER") // Use environment variable for Kafka broker
+	brokers := strings.Split(brokersEnv, ",")
+	topic := os.Getenv("KAFKA_TOPIC") // Use environment variable for Kafka topic
 
 	consumer, err := sarama.NewConsumer(brokers, nil)
 	if err != nil {

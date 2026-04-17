@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: book-web-bff
-        image: 813170851015.dkr.ecr.us-east-1.amazonaws.com/book-web-bff:latest # Replace with your image repository and tag
+        image: 813170851015.dkr.ecr.us-east-1.amazonaws.com/book-web-bff:latest
         imagePullPolicy: Always
         env:
         - name: CUSTOMER_SVC_URL

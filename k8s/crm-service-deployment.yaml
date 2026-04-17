@@ -17,11 +17,11 @@ spec:
     spec:
       containers:
       - name: crm-service
-        image: 813170851015.dkr.ecr.us-east-1.amazonaws.com/crm-service:latest # Replace with your image repository and tag
+        image: 813170851015.dkr.ecr.us-east-1.amazonaws.com/crm-service:latest
         imagePullPolicy: Always
         env:
         - name: KAFKA_BROKER
-          value: "kafka:9092"
+          value: "98.88.99.206:9092,34.195.107.7:9092,54.221.160.63:9092"
         - name: KAFKA_TOPIC
           value: "vkannawa.customer.evt"
         - name: SMTP_EMAIL

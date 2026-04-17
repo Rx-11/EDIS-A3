@@ -17,8 +17,7 @@ spec:
     spec:
       containers:
       - name: book-mobile-bff
-        image: 813170851015.dkr.ecr.us-east-1.amazonaws.com/book-mobile-bff:latest # Replace with your image repository and tag
-        imagePullPolicy: Always
+        image: 813170851015.dkr.ecr.us-east-1.amazonaws.com/book-mobile-bff:latest
         env:
         - name: CUSTOMER_SVC_URL
           value: "http://customer-service:8080"

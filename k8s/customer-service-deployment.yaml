@@ -17,8 +17,7 @@ spec:
     spec:
       containers:
       - name: customer-service
-        image: 813170851015.dkr.ecr.us-east-1.amazonaws.com/customer-service:latest # Replace with your image repository and tag
-        imagePullPolicy: Always
+        image: 813170851015.dkr.ecr.us-east-1.amazonaws.com/customer-service:latest
         env:
         - name: DB_USER
           value: "user"
@@ -33,7 +32,7 @@ spec:
         - name: DB_MIGRATE
           value: "true"
         - name: KAFKA_BROKERS
-          value: "kafka:9092"
+          value: "98.88.99.206:9092,34.195.107.7:9092,54.221.160.63:9092"
         - name: KAFKA_TOPIC
           value: "vkannawa.customer.evt"
         ports:

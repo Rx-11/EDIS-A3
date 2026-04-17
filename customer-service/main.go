@@ -4,11 +4,13 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/Rx-11/EDIS-A3/customer-service/config"
 	"github.com/Rx-11/EDIS-A3/customer-service/db"
 	"github.com/Rx-11/EDIS-A3/customer-service/public"
+	"github.com/Rx-11/EDIS-A3/customer-service/service"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
@@ -26,6 +28,15 @@ func main() {
 	log.Println("Loaded configs.")
 	db.Init(config.GetConfig().DbConfig, db.MySQL, db.LogInfo)
 	db.Migrate()
+
+	brokersEnv := os.Getenv("KAFKA_BROKERS")
+	if brokersEnv != "" {
+		brokers := strings.Split(brokersEnv, ",")
+		if err := service.InitializeKafkaProducer(brokers); err != nil {
+			log.Fatalf("Failed to initialize Kafka producer: %v", err)
+		}
+		log.Println("Kafka producer initialized.")
+	}
 
 	public.MountRoutes(app)
 
