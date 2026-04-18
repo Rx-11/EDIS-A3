@@ -19,7 +19,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var cb = circuitbreaker.NewCircuitBreaker(3, 60*time.Second)
+var cb = circuitbreaker.NewCircuitBreaker(1, 60*time.Second)
 
 func fetchRelatedBooks(c *fiber.Ctx) error {
 	param := c.Locals("param").(fetchBookByISBNParam)
