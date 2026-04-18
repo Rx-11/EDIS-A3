@@ -1,4 +1,4 @@
-http://a4754b1e87aa24106a72dc6086f1c233-1657719778.us-east-1.elb.amazonaws.com:8080/
-http://a79f9765059044553aa2ebbbfd99472c-1258271495.us-east-1.elb.amazonaws.com:8080
+http://acf0b7d63f13f45f09f6bb6a0ffbed92-1686768777.us-east-1.elb.amazonaws.com:80
+http://ac9d6403d033e428d9669dd5e2383981-202591343.us-east-1.elb.amazonaws.com:80
 vkannawa
 vedantcloudcomputing@gmail.com
