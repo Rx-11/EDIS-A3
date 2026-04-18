@@ -27,7 +27,7 @@ func fetchRelatedBooks(c *fiber.Ctx) error {
 
 	res, err := cb.Execute(func() (interface{}, error) {
 		reqURL := fmt.Sprintf("%s/recommended-titles/isbn/%s", config.GetConfig().RecommendationURL, isbn)
-		client := &http.Client{Timeout: 10 * time.Second}
+		client := &http.Client{Timeout: 3 * time.Second}
 		resp, err := client.Get(reqURL)
 		if err != nil {
 			return nil, err
