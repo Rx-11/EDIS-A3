@@ -63,7 +63,7 @@ func sendEmail(event CustomerEvent) {
 	msg.SetHeader("To", event.UserID) // Send email to the customer's email address
 	msg.SetHeader("Subject", "Activate your book store account")
 	msg.SetBody("text/plain", fmt.Sprintf(
-		"Dear %s,\n\nWelcome to the Book store created by <your-andrew-ID>.\n\nExceptionally this time we won’t ask you to click a link to activate your account.",
+		"Dear %s,\n\nWelcome to the Book store created by vkannawa.\n\nExceptionally this time we won’t ask you to click a link to activate your account.",
 		event.Name,
 	))
 

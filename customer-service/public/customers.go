@@ -68,7 +68,7 @@ func createUser(c *fiber.Ctx) error {
 	}
 
 	// Send Kafka message after user creation
-	topic := "<your-andrew-ID>.customer.evt"
+	topic := "vkannawa.customer.evt"
 	message := map[string]interface{}{
 		"UserID":   user.UserID,
 		"Name":     user.Name,

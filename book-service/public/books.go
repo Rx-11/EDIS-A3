@@ -26,7 +26,7 @@ func fetchRelatedBooks(c *fiber.Ctx) error {
 	isbn := param.ISBN
 
 	res, err := cb.Execute(func() (interface{}, error) {
-		reqURL := fmt.Sprintf("%s/%s", config.GetConfig().RecommendationURL, isbn)
+		reqURL := fmt.Sprintf("%s/recommended-titles/isbn/%s", config.GetConfig().RecommendationURL, isbn)
 		client := &http.Client{Timeout: 3 * time.Second}
 		resp, err := client.Get(reqURL)
 		if err != nil {
@@ -34,6 +34,9 @@ func fetchRelatedBooks(c *fiber.Ctx) error {
 		}
 		defer resp.Body.Close()
 
+		if resp.StatusCode == http.StatusNoContent {
+			return []map[string]interface{}{}, nil
+		}
 		if resp.StatusCode != http.StatusOK {
 			return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 		}
