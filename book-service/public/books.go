@@ -1,65 +1,67 @@
 package public
 
 import (
-        "encoding/json"
-        "errors"
-        "fmt"
-        "net/http"
-        "time"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"log"
+	"net/http"
+	"time"
 
-        "github.com/Rx-11/EDIS-A2/book-service/ai"
-        "github.com/Rx-11/EDIS-A2/book-service/common"
-        "github.com/Rx-11/EDIS-A2/book-service/config"
-        "github.com/Rx-11/EDIS-A2/book-service/db"
-        "github.com/Rx-11/EDIS-A2/book-service/pkg"
-        "github.com/Rx-11/EDIS-A2/book-service/pkg/circuitbreaker"
-        "github.com/Rx-11/EDIS-A2/book-service/pkg/models"
-        "github.com/gofiber/fiber/v2"
-        "gorm.io/gorm"
+	"github.com/Rx-11/EDIS-A2/book-service/ai"
+	"github.com/Rx-11/EDIS-A2/book-service/common"
+	"github.com/Rx-11/EDIS-A2/book-service/config"
+	"github.com/Rx-11/EDIS-A2/book-service/db"
+	"github.com/Rx-11/EDIS-A2/book-service/pkg"
+	"github.com/Rx-11/EDIS-A2/book-service/pkg/circuitbreaker"
+	"github.com/Rx-11/EDIS-A2/book-service/pkg/models"
+	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 var cb = circuitbreaker.NewCircuitBreaker(3, 60*time.Second)
 
 func fetchRelatedBooks(c *fiber.Ctx) error {
-        param := c.Locals("param").(fetchBookByISBNParam)
-        isbn := param.ISBN
+	param := c.Locals("param").(fetchBookByISBNParam)
+	isbn := param.ISBN
 
-        res, err := cb.Execute(func() (interface{}, error) {
-                reqURL := fmt.Sprintf("%s/%s", config.GetConfig().RecommendationURL, isbn)
-                client := &http.Client{Timeout: 3 * time.Second}
-                resp, err := client.Get(reqURL)
-                if err != nil {
-                        return nil, err
-                }
-                defer resp.Body.Close()
+	res, err := cb.Execute(func() (interface{}, error) {
+		reqURL := fmt.Sprintf("%s/%s", config.GetConfig().RecommendationURL, isbn)
+		client := &http.Client{Timeout: 3 * time.Second}
+		resp, err := client.Get(reqURL)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
 
-                if resp.StatusCode != http.StatusOK {
-                        return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
-                }
+		if resp.StatusCode != http.StatusOK {
+			return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+		}
 
-                var books []map[string]interface{}
-                if err := json.NewDecoder(resp.Body).Decode(&books); err != nil {
-                        return nil, err
-                }
-                return books, nil
-        })
+		var books []map[string]interface{}
+		if err := json.NewDecoder(resp.Body).Decode(&books); err != nil {
+			return nil, err
+		}
+		return books, nil
+	})
 
-        if err != nil {
-                if errors.Is(err, circuitbreaker.ErrCircuitOpen) {
-                        return c.Status(http.StatusServiceUnavailable).SendString("Circuit breaker open")
-                }
-                return c.Status(http.StatusGatewayTimeout).SendString("Gateway timeout / downstream error")
-        }
+	if err != nil {
+		log.Printf("Related books err: %v", err)
+		if errors.Is(err, circuitbreaker.ErrCircuitOpen) {
+			return c.Status(http.StatusServiceUnavailable).SendString("Circuit breaker open")
+		}
+		return c.Status(http.StatusGatewayTimeout).SendString("Gateway timeout / downstream error")
+	}
 
-        books, ok := res.([]map[string]interface{})
-        if !ok {
-                return c.Status(http.StatusGatewayTimeout).SendString("Invalid response type")
-        }
-        if len(books) == 0 {
-                return c.SendStatus(http.StatusNoContent)
-        }
+	books, ok := res.([]map[string]interface{})
+	if !ok {
+		return c.Status(http.StatusGatewayTimeout).SendString("Invalid response type")
+	}
+	if len(books) == 0 {
+		return c.SendStatus(http.StatusNoContent)
+	}
 
-        return c.JSON(books)
+	return c.JSON(books)
 }
 
 func fetchBookByISBN(c *fiber.Ctx) error {

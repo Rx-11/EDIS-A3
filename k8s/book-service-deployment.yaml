@@ -35,7 +35,7 @@ spec:
         - name: GEMINI_API_KEY
           value: ""
         - name: RECOMMENDATION_URL
-          value: "ec2-52-200-207-188.compute-1.amazonaws.com"
+          value: "http://ec2-52-200-207-188.compute-1.amazonaws.com"
         ports:
         - containerPort: 3000
         livenessProbe:

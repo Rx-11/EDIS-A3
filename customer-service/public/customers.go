@@ -84,7 +84,7 @@ func createUser(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(common.ErrInternalServerError.StatusCode).JSON(common.NewError(
 			common.ErrInternalServerError.StatusCode,
-			"Failed to send Kafka message.",
+			"Failed to send Kafka message."+err.Error(),
 		))
 	}
 
