@@ -1,7 +1,10 @@
 package circuitbreaker
 
 import (
+	"encoding/json"
 	"errors"
+	"os"
+	"path/filepath"
 	"sync"
 	"time"
 )
@@ -18,32 +21,68 @@ const (
 	StateOpen
 )
 
+type CircuitState struct {
+	State       State     `json:"state"`
+	Failures    int       `json:"failures"`
+	LastFailure time.Time `json:"last_failure"`
+}
+
 type CircuitBreaker struct {
 	mu          sync.Mutex
-	state       State
-	failures    int
+	state       CircuitState
 	maxFailures int
 	timeout     time.Duration
-	lastFailure time.Time
+	stateFile   string
 }
 
 func NewCircuitBreaker(maxFailures int, timeout time.Duration) *CircuitBreaker {
-	return &CircuitBreaker{
-		state:       StateClosed,
+	cb := &CircuitBreaker{
+		state:       CircuitState{State: StateClosed, Failures: 0},
 		maxFailures: maxFailures,
 		timeout:     timeout,
+		stateFile:   "/app/state/cb_state.json",
+	}
+	cb.loadState()
+	return cb
+}
+
+func (cb *CircuitBreaker) loadState() {
+	if cb.stateFile == "" {
+		return
+	}
+	data, err := os.ReadFile(cb.stateFile)
+	if err == nil {
+		json.Unmarshal(data, &cb.state)
+	}
+}
+
+func (cb *CircuitBreaker) saveState() {
+	if cb.stateFile == "" {
+		return
+	}
+	dir := filepath.Dir(cb.stateFile)
+	os.MkdirAll(dir, 0755)
+	data, err := json.Marshal(cb.state)
+	if err == nil {
+		os.WriteFile(cb.stateFile, data, 0644)
 	}
 }
 
 func (cb *CircuitBreaker) Execute(req func() (interface{}, error)) (interface{}, error) {
 	cb.mu.Lock()
-	if cb.state == StateOpen {
-		if time.Since(cb.lastFailure) > cb.timeout {
-			cb.state = StateHalfOpen
+	cb.loadState()
+
+	if cb.state.State == StateOpen {
+		if time.Since(cb.state.LastFailure) > cb.timeout {
+			cb.state.State = StateHalfOpen
+			cb.saveState()
 		} else {
 			cb.mu.Unlock()
 			return nil, ErrCircuitOpen
 		}
+	} else if cb.state.State == StateHalfOpen {
+		cb.mu.Unlock()
+		return nil, ErrCircuitOpen
 	}
 	cb.mu.Unlock()
 
@@ -52,16 +91,20 @@ func (cb *CircuitBreaker) Execute(req func() (interface{}, error)) (interface{},
 	cb.mu.Lock()
 	defer cb.mu.Unlock()
 
+	cb.loadState()
+
 	if err != nil {
-		cb.failures++
-		cb.lastFailure = time.Now()
-		if cb.failures >= cb.maxFailures {
-			cb.state = StateOpen
+		cb.state.Failures++
+		cb.state.LastFailure = time.Now()
+		if cb.state.Failures >= cb.maxFailures {
+			cb.state.State = StateOpen
 		}
+		cb.saveState()
 		return nil, err
 	}
 
-	cb.state = StateClosed
-	cb.failures = 0
+	cb.state.State = StateClosed
+	cb.state.Failures = 0
+	cb.saveState()
 	return res, nil
 }
